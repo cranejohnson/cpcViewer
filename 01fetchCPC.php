@@ -43,7 +43,7 @@ function getHazards(){
         "soil7-14" => 'http://www.cpc.ncep.noaa.gov/products/predictions/threats/Soils_D8_14.kml',
         "temp7-14" => 'http://www.cpc.ncep.noaa.gov/products/predictions/threats/Temp_D8_14.kml',
         "monthly_temp" => 'http://www.cpc.ncep.noaa.gov/products/predictions/30day/lead14_temp.kml',
-        "monthly_precip" => 'http://www.cpc.ncep.noaa.gov/products/predictions/30day/lead14_prcp.kml');
+        "monthly_prcp" => 'http://www.cpc.ncep.noaa.gov/products/predictions/30day/lead14_prcp.kml');
 
     foreach($files as $type=>$file){
 
@@ -58,7 +58,7 @@ function getHazards(){
         preg_match('/Created:(.+)Valid/',$kml,$match);
 
         if($type == 'monthly_temp') preg_match('/Valid:(.+)</',$kml,$match);
-        if($type == 'monthly_pecip') preg_match('/Valid:(.+)</',$kml,$match);
+        if($type == 'monthly_prcp') preg_match('/Valid:(.+)</',$kml,$match);
 
         $createdDate = strtotime($match[1]);
         $fileDate = date('Ymd',$createdDate);

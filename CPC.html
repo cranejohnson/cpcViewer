@@ -20,7 +20,7 @@
         text-align: center;
         height:20px;
         }
-        
+
       .cpc {
 		  text-align: center;
 		  font-size: 24px;
@@ -121,6 +121,26 @@
 			</table>
 
 		</div>
+		<div class = 'cpc'>Monthly CPC Outlook<div id='titleMonthly' class='subtitle'></div></div>
+		<div class = 'col'>
+			<div id="message5" class='msg'>Temperature</div>
+			<div id="map5" class="map"></div>
+			<table id='legend'>
+				<tr height="20"><td bgcolor="#150C32"></td><td bgcolor="#190F40"></td><td bgcolor="#222D5B"></td><td bgcolor="#094891"></td><td bgcolor="#2E8CD2"></td><td bgcolor="#66A5DB"></td><td bgcolor="#90B2D7"></td><td bgcolor="#FEFEFE"></td><td bgcolor="#E0A256"></td><td bgcolor="#E0A256"></td><td bgcolor="#CF4025"></td><td bgcolor="#B81A1F"></td><td bgcolor="#BE1A37"></td><td bgcolor="#75202B"></td><td bgcolor="#4E171E"></td></tr>
+				<tr><td>90</td><td>80</td><td>70</td><td>60</td><td>50</td><td>40</td><td>33</td><td>Normal</td><td>33</td><td>40</td><td>50</td><td>60</td><td>70</td><td>80</td><td>90</td></tr>
+				<tr><td colspan='7'>Prob. of Significantly Below (%)</td><td></td><td colspan='7'>Prob. of Significantly Above (%)</td></tr>
+			</table>
+		</div>
+		<div class = 'col'>
+			<div id="message6" class='msg'>Precipitation</div>
+			<div id="map6" class="map"></div>
+			<table id='legend'>
+				<tr height="20"><td bgcolor="#3C2223"></td><td bgcolor="#6C3002"></td><td bgcolor="#7F322A"></td><td bgcolor="#873D25"></td><td bgcolor="#AA5826"></td><td bgcolor="#CE973E"></td><td bgcolor="#ECCC81"></td><td bgcolor="#FEFEFE"></td><td bgcolor="#A5D39B"></td><td bgcolor="#84C56B"></td><td bgcolor="#3CA22B"></td><td bgcolor="#2D6A4B"></td><td bgcolor="#117F31"></td><td bgcolor="#1F442E"></td><td bgcolor="#1F4512"></td></tr>
+				<tr><td>90</td><td>80</td><td>70</td><td>60</td><td>50</td><td>40</td><td>33</td><td>Normal</td><td>33</td><td>40</td><td>50</td><td>60</td><td>70</td><td>80</td><td>90</td></tr>
+				<tr><td colspan='7'>Prob. of Significantly Below (%)</td><td></td><td colspan='7'>Prob. of Significantly Above (%)</td></tr>
+			</table>
+
+		</div>
 	</div>
     <script type="text/javascript">
 
@@ -135,16 +155,17 @@
         }
 
         var plotDate;
+        var monthlyDate;
         var currentDate;
         var yesterday ;
 		var tomorrow ;
         var searchDir = -1;   //Search backwards if data is missing
         if(getURLParameter('dir') == 'forward'){
 	        searchDir = 1;
-        }    
-        
+        }
+
         var newW = 400;
-        
+
         if(getURLParameter('width')){
             newW = parseInt(getURLParameter('width'));
             $('.map').width(newW);
@@ -153,26 +174,30 @@
             $('.cpc').width(newW*2+20);
             $('.map').height(newW*0.75);
         }
-        
-        
+
+
         if(getURLParameter('date')){
 	        currentDate = moment(getURLParameter('date')+" 12:00","YYYY-MM-DD");
             yesterday = moment(getURLParameter('date')+" 12:00","YYYY-MM-DD").add(-1,'days');
             tomorrow = moment(getURLParameter('date')+" 12:00","YYYY-MM-DD").add(1,'days');
 	        plotDate = getURLParameter('date').split("-").join("");
+	        monthlyDate = moment.utc().format('YYYYMM01');
+
 		}
 		else{
 			currentDate = moment.utc();
 			yesterday = moment.utc().add(-1,'days');
 			tomorrow = moment.utc().add(1,'days');
 	        plotDate = moment.utc().format('YYYYMMDD');
+	        monthlyDate = moment.utc().format('YYYYMM01');
+
 		}
 
 
-        
 
 
-		
+
+
 
 
 		var i = 0;
@@ -184,7 +209,7 @@
 
 	        var found610 = false;
         	var found814 = false;
-            
+
 			$.ajax({
 				type: "GET",
 				url: './cpcData/610temp_'+plotDate+'.kml',
@@ -208,15 +233,28 @@
                     $("#title814").html(plotDate);
 					$("#title814").html(temp.match(/(Created.*)/)[0]);
 					found814 = true;
-  
+
 				}
 				});
 
+			 $.ajax({
+				type: "GET",
+				url: './cpcData/monthly_temp_'+monthlyDate+'.kml',
+				dataType: "xml",
+				async: false,
+				success: function(xml){
+					var temp = $(xml).find('name').first().text();
+                    $("#titleMonthly").html(plotDate);
+					$("#titleMonthly").html(temp.match(/(Created.*)/)[0]);
+					found814 = true;
+
+				}
+				});
  			if( found610 == false && found814 == false){
                 currentDate.add(searchDir,'days');
                 yesterday.add(searchDir,'days');
                 tomorrow.add(searchDir,'days');
-                plotDate = currentDate.format('YYYYMMDD'); 
+                plotDate = currentDate.format('YYYYMMDD');
                 if (currentDate.isAfter() == true){
                     currentDate = moment.utc();
                     yesterday = moment.utc().add(-1,'days');
@@ -228,7 +266,7 @@
  				break;
  			}
  		}
-        
+
         $("#currentDate").html("Current Date:"+currentDate.format('YYYY-MM-DD'));
 
 		var styleFunction = function(feature, resolution) {
@@ -280,6 +318,15 @@
   			condition: ol.events.condition.pointerMove
 		});
 
+		// select interaction working on "pointermove"
+		var selectPointerMove5 = new ol.interaction.Select({
+  			condition: ol.events.condition.pointerMove
+		});
+
+		// select interaction working on "pointermove"
+		var selectPointerMove6 = new ol.interaction.Select({
+  			condition: ol.events.condition.pointerMove
+		});
 
 		//Add the vector CPC data to the map
   		var temp610 = new ol.layer.Vector({
@@ -302,7 +349,7 @@
 
 		});
 
-				//Add the vector CPC data to the map
+		//Add the vector CPC data to the map
   		var prcp610 = new ol.layer.Vector({
 			source: new ol.source.KML({
 				extractStyles: false,
@@ -323,7 +370,25 @@
 
 		});
 
+		var prcpMonthly = new ol.layer.Vector({
+			source: new ol.source.KML({
+				extractStyles: false,
+				projection: 'EPSG:3857',
+				url: './cpcData/monthly_prcp_'+monthlyDate+'.kml'
+			}),
+			style: styleFunction
 
+		});
+
+		var tempMonthly = new ol.layer.Vector({
+			source: new ol.source.KML({
+				extractStyles: false,
+				projection: 'EPSG:3857',
+				url: './cpcData/monthly_temp_'+monthlyDate+'.kml'
+			}),
+			style: styleFunction
+
+		});
         //Add attribution for ESRI base map layer
 		var attribution = new ol.Attribution({
 		  html: 'Tiles &copy; <a href="http://services.arcgisonline.com/ArcGIS/' +
@@ -386,6 +451,26 @@
 			})
 		});
 
+		var map5 = new ol.Map({
+			target: 'map5',
+			layers: [topo,tempMonthly],
+			controls: [],
+			view: new ol.View({
+			  center: ol.proj.transform([-152, 63], 'EPSG:4326', 'EPSG:3857'),
+			  zoom: 3
+			})
+		});
+
+		var map6 = new ol.Map({
+			target: 'map6',
+			layers: [topo,prcpMonthly],
+			controls: [],
+			view: new ol.View({
+			  center: ol.proj.transform([-152, 63], 'EPSG:4326', 'EPSG:3857'),
+			  zoom: 3
+			})
+		});
+
 		map.on('pointermove', function(evt) {
 		  var feature = this.forEachFeatureAtPixel(this.getEventPixel(evt.originalEvent), function(feature, layer) {
 			return feature;
@@ -434,13 +519,42 @@
 
 		});
 
+		map5.on('pointermove', function(evt) {
+		  var feature = this.forEachFeatureAtPixel(this.getEventPixel(evt.originalEvent), function(feature, layer) {
+			return feature;
+		  });
+		  if (feature) {
+			$("#message5").html(feature.get('name'));
+		  } else {
+			$("#message5").html("Temperature");
+		  }
+
+		});
+
+		map6.on('pointermove', function(evt) {
+		  var feature = this.forEachFeatureAtPixel(this.getEventPixel(evt.originalEvent), function(feature, layer) {
+			return feature;
+		  });
+		  if (feature) {
+			$("#message6").html(feature.get('name'));
+		  } else {
+			$("#message6").html("Precipitation");
+		  }
+
+		});
+
         map2.bindTo('view', map);
         map3.bindTo('view', map);
         map4.bindTo('view', map);
+        map5.bindTo('view', map);
+        map6.bindTo('view', map);
         map.addInteraction(selectPointerMove);
         map2.addInteraction(selectPointerMove2);
         map3.addInteraction(selectPointerMove3);
         map4.addInteraction(selectPointerMove4);
+        map5.addInteraction(selectPointerMove5);
+        map6.addInteraction(selectPointerMove6);
+
 
 		$( "#back" ).click(function() {
 		    var url = location.protocol + '//' + location.host + location.pathname;
