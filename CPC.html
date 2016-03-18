@@ -181,7 +181,7 @@
             yesterday = moment(getURLParameter('date')+" 12:00","YYYY-MM-DD").add(-1,'days');
             tomorrow = moment(getURLParameter('date')+" 12:00","YYYY-MM-DD").add(1,'days');
 	        plotDate = getURLParameter('date').split("-").join("");
-	        monthlyDate = moment.utc().format('YYYYMM01');
+	        monthlyDate = moment(getURLParameter('date')+" 12:00","YYYY-MM-DD");
 
 		}
 		else{
@@ -189,10 +189,9 @@
 			yesterday = moment.utc().add(-1,'days');
 			tomorrow = moment.utc().add(1,'days');
 	        plotDate = moment.utc().format('YYYYMMDD');
-	        monthlyDate = moment.utc().format('YYYYMM01');
+	        monthlyDate = moment.utc();
 
 		}
-
 
 
 
@@ -209,6 +208,7 @@
 
 	        var found610 = false;
         	var found814 = false;
+        	var foundMonthly = false;
 
 			$.ajax({
 				type: "GET",
@@ -237,20 +237,33 @@
 				}
 				});
 
-			 $.ajax({
-				type: "GET",
-				url: './cpcData/monthly_temp_'+monthlyDate+'.kml',
-				dataType: "xml",
-				async: false,
-				success: function(xml){
-					var temp = $(xml).find('name').first().text();
-                    $("#titleMonthly").html(plotDate);
-					$("#titleMonthly").html(temp.match(/(Created.*)/)[0]);
-					found814 = true;
+            while(1){
+                 var y = 0;
+                 $.ajax({
+                    type: "GET",
+                    url: './cpcData/monthly_temp_'+monthlyDate.format('YYYYMMDD')+'.kml',
+                    dataType: "xml",
+                    async: false,
+                    success: function(xml){
+                        var temp = $(xml).find('name').first().text();
+                        $("#titleMonthly").html(plotDate);
+                        $("#titleMonthly").html(temp.match(/(Created.*)/)[0]);
+                        foundMonthly = true;
+                    },
+                    error: function(){
+                        monthlyDate.add(searchDir,'days');
+                    }
+                });
+                if(foundMonthly) break;
+                y = y+1;
 
-				}
-				});
- 			if( found610 == false && found814 == false){
+               if (y > 100) break;
+           }
+
+
+
+
+ 			if( found610 == false){
                 currentDate.add(searchDir,'days');
                 yesterday.add(searchDir,'days');
                 tomorrow.add(searchDir,'days');
@@ -374,7 +387,7 @@
 			source: new ol.source.KML({
 				extractStyles: false,
 				projection: 'EPSG:3857',
-				url: './cpcData/monthly_prcp_'+monthlyDate+'.kml'
+				url: './cpcData/monthly_prcp_'+monthlyDate.format('YYYYMMDD')+'.kml'
 			}),
 			style: styleFunction
 
@@ -384,7 +397,7 @@
 			source: new ol.source.KML({
 				extractStyles: false,
 				projection: 'EPSG:3857',
-				url: './cpcData/monthly_temp_'+monthlyDate+'.kml'
+				url: './cpcData/monthly_temp_'+monthlyDate.format('YYYYMMDD')+'.kml'
 			}),
 			style: styleFunction
 

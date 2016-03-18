@@ -5,7 +5,7 @@ error_reporting(0);
 chdir(dirname(__FILE__));
 chdir('cpcData');
 
-if(!($days = $_GET['days'])) $days = 1;
+if(!($days = $_GET['days'])) $days = 7;
 
 
 
@@ -57,8 +57,8 @@ function getHazards(){
         }
         preg_match('/Created:(.+)Valid/',$kml,$match);
 
-        if($type == 'monthly_temp') preg_match('/Valid:(.+)</',$kml,$match);
-        if($type == 'monthly_prcp') preg_match('/Valid:(.+)</',$kml,$match);
+   #     if($type == 'monthly_temp') preg_match('/Valid:(.+)</',$kml,$match);
+   #     if($type == 'monthly_prcp') preg_match('/Valid:(.+)</',$kml,$match);
 
         $createdDate = strtotime($match[1]);
         $fileDate = date('Ymd',$createdDate);
