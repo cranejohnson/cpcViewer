@@ -154,7 +154,6 @@
              return colorArray;
         }
 
-        var plotDate;
         var monthlyDate;
         var currentDate;
         var yesterday ;
@@ -197,88 +196,55 @@
 
 
 
-
-
+        var found610 = false;
+		var foundMonthly = false;
+        var y = 0;
 		var i = 0;
 
-		while(1){
-	        i=i+1;
-            //If it tries more than 100 dates break out of this loop
-	        if (i == 14) { break; }
-
-	        var found610 = false;
-        	var found814 = false;
-        	var foundMonthly = false;
-
+		while(i < 30){
 			$.ajax({
 				type: "GET",
-				url: './cpcData/610temp_'+plotDate+'.kml',
+				url: './cpcData/610temp_'+currentDate.format('YYYYMMDD')+'.kml',
 				dataType: "xml",
 				async: false,
 				success: function(xml){
 					var temp = $(xml).find('name').first().text();
-                    $("#title610").html(plotDate);
+                    $("#title610").html(currentDate.format('YYYY-MM-DD'));
 					$("#title610").html(temp.match(/(Created.*)/)[0]);
-					found610 = true;
- 				}
-				});
-
-			 $.ajax({
-				type: "GET",
-				url: './cpcData/814temp_'+plotDate+'.kml',
-				dataType: "xml",
-				async: false,
-				success: function(xml){
-					var temp = $(xml).find('name').first().text();
-                    $("#title814").html(plotDate);
+                    $("#title814").html(currentDate.format('YYYY-MM-DD'));
 					$("#title814").html(temp.match(/(Created.*)/)[0]);
-					found814 = true;
+					found610 = true;
+ 				},
+                error: function(){
+                        currentDate.add(searchDir,'days');
+                        yesterday.add(searchDir,'days');
+                        tomorrow.add(searchDir,'days');
+                }
+			});
+            i = i+1;
+            console.log(currentDate.format('YYYY-MM-DD'));
+			if(found610 == true) break;
+		}
 
-				}
-				});
-
-            while(1){
-                 var y = 0;
-                 $.ajax({
-                    type: "GET",
-                    url: './cpcData/monthly_temp_'+monthlyDate.format('YYYYMMDD')+'.kml',
-                    dataType: "xml",
-                    async: false,
-                    success: function(xml){
-                        var temp = $(xml).find('name').first().text();
-                        $("#titleMonthly").html(plotDate);
-                        $("#titleMonthly").html(temp.match(/(Created.*)/)[0]);
-                        foundMonthly = true;
-                    },
-                    error: function(){
-                        monthlyDate.add(searchDir,'days');
-                    }
-                });
-                if(foundMonthly) break;
-                y = y+1;
-
-               if (y > 100) break;
-           }
-
-
-
-
- 			if( found610 == false){
-                currentDate.add(searchDir,'days');
-                yesterday.add(searchDir,'days');
-                tomorrow.add(searchDir,'days');
-                plotDate = currentDate.format('YYYYMMDD');
-                if (currentDate.isAfter() == true){
-                    currentDate = moment.utc();
-                    yesterday = moment.utc().add(-1,'days');
-                    tomorrow = moment.utc().add(1,'days');
-                    plotDate = moment.utc().format('YYYYMMDD');
-                    }
-                 }
- 			else{
- 				break;
- 			}
- 		}
+        while(y < 30){
+             $.ajax({
+                type: "GET",
+                url: './cpcData/monthly_temp_'+monthlyDate.format('YYYYMMDD')+'.kml',
+                dataType: "xml",
+                async: false,
+                success: function(xml){
+                    var temp = $(xml).find('name').first().text();
+                    $("#titleMonthly").html(currentDate.format('YYYY-MM-DD'));
+                    $("#titleMonthly").html(temp.match(/(Created.*)/)[0]);
+                    foundMonthly = true;
+                },
+                error: function(){
+                    monthlyDate.add(searchDir,'days');
+                }
+            });
+            if(foundMonthly) break;
+            y = y+1;
+       }
 
         $("#currentDate").html("Current Date:"+currentDate.format('YYYY-MM-DD'));
 
@@ -346,7 +312,7 @@
 			source: new ol.source.KML({
 				extractStyles: false,
 				projection: 'EPSG:3857',
-				url: './cpcData/610temp_'+plotDate+'.kml'
+				url: './cpcData/610temp_'+currentDate.format('YYYYMMDD')+'.kml'
 			}),
 			style: styleFunction
 
@@ -356,7 +322,7 @@
 			source: new ol.source.KML({
 				extractStyles: false,
 				projection: 'EPSG:3857',
-				url: './cpcData/814temp_'+plotDate+'.kml'
+				url: './cpcData/814temp_'+currentDate.format('YYYYMMDD')+'.kml'
 			}),
 			style: styleFunction
 
@@ -367,7 +333,7 @@
 			source: new ol.source.KML({
 				extractStyles: false,
 				projection: 'EPSG:3857',
-				url: './cpcData/610prcp_'+plotDate+'.kml'
+				url: './cpcData/610prcp_'+currentDate.format('YYYYMMDD')+'.kml'
 			}),
 			style: styleFunction
 
@@ -377,7 +343,7 @@
 			source: new ol.source.KML({
 				extractStyles: false,
 				projection: 'EPSG:3857',
-				url: './cpcData/814prcp_'+plotDate+'.kml'
+				url: './cpcData/814prcp_'+currentDate.format('YYYYMMDD')+'.kml'
 			}),
 			style: styleFunction
 
