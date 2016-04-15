@@ -62,6 +62,7 @@ function getHazards(){
 
         $createdDate = strtotime($match[1]);
         $fileDate = date('Ymd',$createdDate);
+        echo "Saving Files as: ".$type."_".$fileDate.".kml\n";
         file_put_contents($type."_".$fileDate.".kml",$kml);
   }
 }
