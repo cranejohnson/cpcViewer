@@ -45,7 +45,7 @@
 	 	width:820px;
 	 }
 	 .col {
-	 	width:408px;
+	 	width:407px;
 	 	float:left;
 	 	border-style: solid;
         border-width: 1px;
@@ -84,7 +84,6 @@
 		<div class = 'col'>
 			<div id="message" class='msg'>Temperature</div>
 			<div id="map" class="map"></div>
-
 			<table id='legend'>
 				<tr height="20"><td bgcolor="#150C32"></td><td bgcolor="#190F40"></td><td bgcolor="#222D5B"></td><td bgcolor="#094891"></td><td bgcolor="#2E8CD2"></td><td bgcolor="#66A5DB"></td><td bgcolor="#90B2D7"></td><td bgcolor="#FEFEFE"></td><td bgcolor="#E0A256"></td><td bgcolor="#E0A256"></td><td bgcolor="#CF4025"></td><td bgcolor="#B81A1F"></td><td bgcolor="#BE1A37"></td><td bgcolor="#75202B"></td><td bgcolor="#4E171E"></td></tr>
 				<tr><td>90</td><td>80</td><td>70</td><td>60</td><td>50</td><td>40</td><td>33</td><td>Normal</td><td>33</td><td>40</td><td>50</td><td>60</td><td>70</td><td>80</td><td>90</td></tr>
@@ -168,9 +167,9 @@
         if(getURLParameter('width')){
             newW = parseInt(getURLParameter('width'));
             $('.map').width(newW);
-            $('#main').width(newW*2+20);
-            $('.col').width(newW+8);
-            $('.cpc').width(newW*2+20);
+            $('#main').width(newW*2+30);
+            $('.col').width(newW+12);
+            $('.cpc').width(newW*2+30);
             $('.map').height(newW*0.75);
         }
 
@@ -239,7 +238,7 @@
                     foundMonthly = true;
                 },
                 error: function(){
-                    monthlyDate.add(searchDir,'days');
+                    monthlyDate.add(-1,'days');
                 }
             });
             if(foundMonthly) break;
