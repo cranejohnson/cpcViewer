@@ -269,7 +269,15 @@
             }
             Prob = Prob+10;
             var opacity= 0.7;
-            var plotColor = colorFunction(colors[Prob]);
+          
+            if(name.match(/EC/)){
+                var plotColor = colorFunction('FEFEFE');
+                
+            }
+            else{
+               var plotColor = colorFunction(colors[Prob]);
+            }   
+            
             plotColor.push(opacity);
             return [new ol.style.Style({
             fill: new ol.style.Fill({
