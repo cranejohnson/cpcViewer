@@ -75,11 +75,14 @@
   </head>
   <body>
     <div id="main">
-        <div id='currentDate'></div>
+        
+        Current Date:<input type="text" name="firstname" id='currentDate1'><br>
         <button id='larger' type="button" >Larger</button>
         <button id='smaller' type="button" >Smaller</button></br>
         <button  class = 'button back'>Back one day</button>
         <button  class = 'button forward'>Forward one day</button>
+        <table>
+        <tr><td>
         <div class = 'cpc'>6-10 Day CPC Outlook<div id='title610' class='subtitle'></div></div>
         <div class = 'col'>
             <div id="message" class='msg'>Temperature</div>
@@ -120,6 +123,7 @@
             </table>
 
         </div>
+        </td><td>
         <div class = 'cpc'>Monthly CPC Outlook<div id='titleMonthly' class='subtitle'></div></div>
         <div class = 'col'>
             <div id="message5" class='msg'>Temperature</div>
@@ -140,8 +144,8 @@
             </table>
 
         </div>
-        <button  class = 'button back'>Back one day</button>
-        <button  class = 'button forward'>Forward one day</button>
+        </td></tr></table>
+        
     </div>
     <br>
     <br>
@@ -166,22 +170,23 @@
             searchDir = 1;
         }
 
-        var newW = 400;
+        var newW = 275;
 
         if(getURLParameter('width')){
             newW = parseInt(getURLParameter('width'));
-            $('.map').width(newW);
-            $('#main').width(newW*2+30);
-            $('.col').width(newW+12);
-            $('.cpc').width(newW*2+30);
-            $('.map').height(newW*0.75);
-        }
+        }    
+        $('.map').width(newW);
+        $('#main').width(newW*2+30);
+        $('.col').width(newW+12);
+        $('.cpc').width(newW*2+30);
+        $('.map').height(newW*0.75);
+    
 
 
-        if(getURLParameter('date')){
-            currentDate = moment(getURLParameter('date')+" 12:00","YYYY-MM-DD");
-            yesterday = moment(getURLParameter('date')+" 12:00","YYYY-MM-DD").add(-1,'days');
-            tomorrow = moment(getURLParameter('date')+" 12:00","YYYY-MM-DD").add(1,'days');
+        if($('#currentDate1').val()){
+            currentDate = moment($('#currentDate1').val()+" 12:00","YYYY-MM-DD");
+            yesterday = moment($('#currentDate1').val()+" 12:00","YYYY-MM-DD").add(-1,'days');
+            tomorrow = moment($('#currentDate1').val()+" 12:00","YYYY-MM-DD").add(1,'days');
             plotDate = getURLParameter('date').split("-").join("");
             monthlyDate = moment(getURLParameter('date')+" 12:00","YYYY-MM-DD");
 
@@ -249,8 +254,8 @@
             y = y+1;
        }
 
-        $("#currentDate").html("Current Date:"+currentDate.format('YYYY-MM-DD'));
-
+        
+        $("#currentDate1").val(currentDate.format('YYYY-MM-DD'));
         var styleFunction = function(feature, resolution) {
 
             var name = feature.get('name'); //
@@ -404,7 +409,7 @@
             layers: [topo,temp610],
             controls: [],
             view: new ol.View({
-              center: ol.proj.transform([-152, 63], 'EPSG:4326', 'EPSG:3857'),
+              center: ol.proj.transform([-152, 64], 'EPSG:4326', 'EPSG:3857'),
               zoom: 3
             })
         });
