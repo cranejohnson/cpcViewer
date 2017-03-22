@@ -225,8 +225,6 @@
                     var temp = $(xml).find('name').first().text();
                     $("#title610").html(currentDate.format('YYYY-MM-DD'));
                     $("#title610").html(temp.match(/(Created.*)/)[0]);
-                    $("#title814").html(currentDate.format('YYYY-MM-DD'));
-                    $("#title814").html(temp.match(/(Created.*)/)[0]);
                     found610 = true;
                 },
                 error: function(){
@@ -239,6 +237,21 @@
             if(found610 == true) break;
         }
 
+        
+       $.ajax({
+            type: "GET",
+            url: './cpcData/814temp_'+currentDate.format('YYYYMMDD')+'.kml',
+            dataType: "xml",
+            async: false,
+            success: function(xml){
+                var temp = $(xml).find('name').first().text();
+                $("#title814").html(currentDate.format('YYYY-MM-DD'));
+                $("#title814").html(temp.match(/(Created.*)/)[0]);
+            }
+        });        
+        
+        
+        
         while(y < 30){
              $.ajax({
                 type: "GET",
