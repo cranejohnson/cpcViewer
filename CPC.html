@@ -75,13 +75,13 @@
   </head>
   <body>
     <div id="main">
-        
+
         Current Date:<input type="text" name="firstname" id='currentDate1'><button  class = ' back'>-1 Day</button><button  class = ' forward'>+1 Day</button>
         <button  class = ' backYear'>-1 Year</button><button  class = ' forwardYear'>+1 Year</button><br>
         <button id='larger' type="button" >Larger</button>
         <button id='smaller' type="button" >Smaller</button></br>
-       
-        
+
+
         <table>
         <tr><td>
         <div class = 'cpc'>6-10 Day CPC Outlook<div id='title610' class='subtitle'></div></div>
@@ -146,7 +146,7 @@
 
         </div>
         </td></tr></table>
-        
+
     </div>
     <br>
     <br>
@@ -162,8 +162,8 @@
              return colorArray;
         }
 
-        
-        
+
+
         var monthlyDate;
         var currentDate;
         var yesterday ;
@@ -177,17 +177,20 @@
 
         if(getURLParameter('width')){
             newW = parseInt(getURLParameter('width'));
-        }    
+        }
         $('.map').width(newW);
         $('#main').width(newW*2+30);
         $('.col').width(newW+12);
         $('.cpc').width(newW*2+30);
         $('.map').height(newW*0.75);
-    
+
         if(getURLParameter('date')){
             $('#currentDate1').val(moment(getURLParameter('date')).format('YYYY-MM-DD'));
-        }   
+        }
 
+        if(moment() < moment($('#currentDate1').val())){
+            $('#currentDate1').val(moment().format('YYYY-MM-DD'));
+        }
 
         if($('#currentDate1').val()){
             currentDate = moment($('#currentDate1').val()+" 12:00","YYYY-MM-DD");
@@ -237,7 +240,7 @@
             if(found610 == true) break;
         }
 
-        
+
        $.ajax({
             type: "GET",
             url: './cpcData/814temp_'+currentDate.format('YYYYMMDD')+'.kml',
@@ -248,10 +251,10 @@
                 $("#title814").html(currentDate.format('YYYY-MM-DD'));
                 $("#title814").html(temp.match(/(Created.*)/)[0]);
             }
-        });        
-        
-        
-        
+        });
+
+
+
         while(y < 30){
              $.ajax({
                 type: "GET",
@@ -272,7 +275,7 @@
             y = y+1;
        }
 
-        
+
         $("#currentDate1").val(currentDate.format('YYYY-MM-DD'));
         var styleFunction = function(feature, resolution) {
 
@@ -292,15 +295,15 @@
             }
             Prob = Prob+10;
             var opacity= 0.7;
-          
+
             if(name.match(/EC/)){
                 var plotColor = colorFunction('FEFEFE');
-                
+
             }
             else{
                var plotColor = colorFunction(colors[Prob]);
-            }   
-            
+            }
+
             plotColor.push(opacity);
             return [new ol.style.Style({
             fill: new ol.style.Fill({
@@ -572,8 +575,8 @@
         $("#currentDate1").change(function(){
             var url = location.protocol + '//' + location.host + location.pathname;
             location.href = url + "?date="+moment($("#currentDate1").val()).format('YYYY-MM-DD')+"&width="+newW;
-        });            
- 
+        });
+
         $( ".back" ).click(function() {
             var url = location.protocol + '//' + location.host + location.pathname;
             location.href = url + "?date="+yesterday.format('YYYY-MM-DD')+"&width="+newW;
@@ -583,7 +586,7 @@
             location.href = url + "?date="+tomorrow.format('YYYY-MM-DD')+"&dir=forward&width="+newW;
 
         });
-        
+
         $( ".backYear" ).click(function() {
             var url = location.protocol + '//' + location.host + location.pathname;
             location.href = url + "?date="+moment($("#currentDate1").val()).add('years',-1).format('YYYY-MM-DD')+"&width="+newW;
@@ -592,7 +595,7 @@
             var url = location.protocol + '//' + location.host + location.pathname;
             location.href = url + "?date="+moment($("#currentDate1").val()).add('years',1).format('YYYY-MM-DD')+"&width="+newW;
 
-        });        
+        });
         $( "#larger" ).click(function() {
             var url = location.protocol + '//' + location.host + location.pathname;
             location.href = url + "?date="+currentDate.format('YYYY-MM-DD')+"&dir=forward&width="+Math.round(newW*1.1);
