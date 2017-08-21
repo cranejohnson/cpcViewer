@@ -1,0 +1,18 @@
+  {"type": "FeatureCollection", "features": [ 
+  { "type": "Feature", "properties": { "name": "Anchorage" }, "geometry": { "type": "Point", "coordinates": [ -149.9335262,61.1083454 ] } },
+  { "type": "Feature", "properties": { "name": "Homer" }, "geometry": { "type": "Point", "coordinates": [ -151.601765, 59.6400705 ] } },
+  { "type": "Feature", "properties": { "name": "McGrath" }, "geometry": { "type": "Point", "coordinates": [ -155.6373292, 62.9426785 ] } },
+  { "type": "Feature", "properties": { "name": "Bethel" }, "geometry": { "type": "Point", "coordinates": [ -161.8637673, 60.7908599 ] } },
+  { "type": "Feature", "properties": { "name": "King Salmon" }, "geometry": { "type": "Point", "coordinates": [ -156.6887739, 58.7553423 ] } },
+  { "type": "Feature", "properties": { "name": "Kodiak" }, "geometry": { "type": "Point", "coordinates": [ -152.4389933, 57.7926219 ] } },
+  { "type": "Feature", "properties": { "name": "Cold Bay" }, "geometry": { "type": "Point", "coordinates": [ -162.8977846, 55.1999527 ] } },
+  { "type": "Feature", "properties": { "name": "Nome" }, "geometry": { "type": "Point", "coordinates": [ -165.4818705, 64.5242073 ] } },
+  { "type": "Feature", "properties": { "name": "Barrow" }, "geometry": { "type": "Point", "coordinates": [ -156.9219574, 71.2851021 ] } },
+  { "type": "Feature", "properties": { "name": "Kotzebue" }, "geometry": { "type": "Point", "coordinates": [ -162.6449741, 66.8777533 ] } },
+  { "type": "Feature", "properties": { "name": "Fairbanks" }, "geometry": { "type": "Point", "coordinates": [ -147.7390417, 64.828421 ] } },
+  { "type": "Feature", "properties": { "name": "Juneau" }, "geometry": { "type": "Point", "coordinates": [ -135.297486, 58.3810086 ] } },
+  { "type": "Feature", "properties": { "name": "Sitka" }, "geometry": { "type": "Point", "coordinates": [ -136.6513168, 57.0779644 ] } },
+  { "type": "Feature", "properties": { "name": "Yakutat" }, "geometry": { "type": "Point", "coordinates": [ -142.9362548, 59.6452395 ] } },
+  { "type": "Feature", "properties": { "name": "Skagway" }, "geometry": { "type": "Point", "coordinates": [ -135.6380764, 59.5702547 ] } },
+  { "type": "Feature", "properties": { "name": "Ketchikan" }, "geometry": { "type": "Point", "coordinates": [ -131.6942006, 55.3464949 ] } }
+  ]}
