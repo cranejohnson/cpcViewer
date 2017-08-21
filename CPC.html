@@ -1,80 +1,91 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <link rel="stylesheet" href="http://openlayers.org/en/v3.4.0/css/ol.css" type="text/css">
-    <style>
-      .map {
-        height: 300px;
-        width: 400px;
-        float:left;
-        padding-left:5px;
-        padding-right:5px;
-
-      }
-      .subtitle{
-        font-size: 14px;
-        height:20px;
-        }
-
-        #currentDate {
-        text-align: center;
-        height:20px;
-        }
-
-      .cpc {
-          text-align: center;
-          font-size: 24px;
-          float:left;
-          width:820px;
-          font-family: sans-serif;
-          background-color: gainsboro;
-          margin-top:10px;
-
-        }
-     .msg{
-         text-align: center;
-         font-family: sans-serif;
-         width:100%;
-         height:20px;
-         float:left;
-         position: relative;
-         top: 50%;
-         transform: translateY(10%);
-        }
-     #main {
-        width:820px;
-     }
-     .col {
-        width:407px;
-        float:left;
-        border-style: solid;
-        border-width: 1px;
-     }
-     .button {
-        width:50%;
-        float:left;
-
-     }
-     img {
-        width:100%;
-     }
-     #legend {
-      width:100%;
-      font-size: 12px;
-      font-weight: bold;
-      text-align: center;
-      }
-
-
-
-    </style>
-    <script src="http://openlayers.org/en/v3.4.0/build/ol.js" type="text/javascript"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-    <script src = "http://momentjs.com/downloads/moment.min.js"></script>
-    <title>CPC Outlook</title>
-  </head>
-  <body>
-    <div id="main">
+	<head>
+		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+		<script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+		<script src="//cdn.jsdelivr.net/leaflet.esri/2.0.0-beta.7/esri-leaflet.js"></script>
+		<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+		<script src = "http://momentjs.com/downloads/moment.min.js"></script>
+		<script src="/js/L.Map.Sync.js"></script>
+		<script src="/js/leaflet-clonelayer.js"></script>
+		<script src="/js/togeojson.js"></script>
+		<style>
+			.map {
+				height: 300px;
+				width: 400px;
+				float:left;
+				padding-left:5px;
+				padding-right:5px;
+		
+			  }
+			  .subtitle{
+				font-size: 14px;
+				height:20px;
+				}
+		
+				#currentDate {
+				text-align: center;
+				height:20px;
+				}
+		
+			  .cpc {
+				  text-align: center;
+				  font-size: 24px;
+				  float:left;
+				  width:820px;
+				  font-family: sans-serif;
+				  background-color: gainsboro;
+				  margin-top:10px;
+		
+				}
+			 .msg{
+				 text-align: center;
+				 font-family: sans-serif;
+				 width:100%;
+				 height:20px;
+				 float:left;
+				 position: relative;
+				 top: 50%;
+				 transform: translateY(10%);
+				}
+			 #main {
+				width:820px;
+			 }
+			 .col {
+				width:407px;
+				float:left;
+				border-style: solid;
+				border-width: 1px;
+			 }
+			 .button {
+				width:50%;
+				float:left;
+		
+			 }
+			 img {
+				width:100%;
+			 }
+			 #legend {
+			  width:100%;
+			  font-size: 12px;
+			  font-weight: bold;
+			  text-align: center;
+			  }
+			.label{
+				font-size: 12px;
+				white-space:nowrap;
+				font-weight: bold;
+				text-shadow: 0 0 0.1em white, 0 0 0.1em white,
+					0 0 0.1em white,0 0 0.1em white,0 0 0.1em;
+				color: #000;
+				background: none;
+				border: none;
+				box-shadow: none;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="main">
 
         Current Date:<input type="text" name="firstname" id='currentDate1'><button  class = ' back'>-1 Day</button><button  class = ' forward'>+1 Day</button>
         <button  class = ' backYear'>-1 Year</button><button  class = ' forwardYear'>+1 Year</button><br>
@@ -148,23 +159,13 @@
         </td></tr></table>
 
     </div>
-    <br>
-    <br>
-    <script type="text/javascript">
-
-        function getURLParameter(name) {
+	</body>
+	<script>
+		function getURLParameter(name) {
             return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null
         }
-
-        //Function converts HTML color to decimal array i.e. FEFEFE becomes [254,254,254]
-        var colorFunction = function(color){
-             var colorArray = [parseInt(color.substring(0,2),16),parseInt(color.substring(2,4),16),parseInt(color.substring(4,6),16)];
-             return colorArray;
-        }
-
-
-
-        var monthlyDate;
+		
+		var monthlyDate;
         var currentDate;
         var yesterday ;
         var tomorrow ;
@@ -208,12 +209,8 @@
             monthlyDate = moment.utc();
 
         }
-
-
-
-
-
-        var found610 = false;
+		
+		var found610 = false;
         var foundMonthly = false;
         var y = 0;
         var i = 0;
@@ -221,7 +218,7 @@
         while(i < 30){
             $.ajax({
                 type: "GET",
-                url: './cpcData/610temp_'+currentDate.format('YYYYMMDD')+'.kml',
+                url: 'cpcData/610temp_'+currentDate.format('YYYYMMDD')+'.kml',
                 dataType: "xml",
                 async: false,
                 success: function(xml){
@@ -237,13 +234,13 @@
                 }
             });
             i = i+1;
-            if(found610 == true) break;
+            if(found610 === true) break;
         }
 
 
        $.ajax({
             type: "GET",
-            url: './cpcData/814temp_'+currentDate.format('YYYYMMDD')+'.kml',
+            url: 'cpcData/814temp_'+currentDate.format('YYYYMMDD')+'.kml',
             dataType: "xml",
             async: false,
             success: function(xml){
@@ -258,7 +255,7 @@
         while(y < 30){
              $.ajax({
                 type: "GET",
-                url: './cpcData/monthly_temp_'+monthlyDate.format('YYYYMMDD')+'.kml',
+                url: 'cpcData/monthly_temp_'+monthlyDate.format('YYYYMMDD')+'.kml',
                 dataType: "xml",
                 async: false,
                 success: function(xml){
@@ -275,304 +272,196 @@
             y = y+1;
        }
 
-
         $("#currentDate1").val(currentDate.format('YYYY-MM-DD'));
-        var styleFunction = function(feature, resolution) {
-
-            var name = feature.get('name'); //
-            var colors = ['3C2223','6C3002','7F322A','873D25','AA5826','CE973E','ECCC81','FEFEFE','FEFEFE','FEFEFE','FEFEFE','FEFEFE','FEFEFE','A5D39B','84C56B','3CA22B','2D6A4B','117F31','1F442E','1F4512'];
-
-            var match = name.match(/Temp/);
-            if(match){
-            var colors = ['150C32','190F40','222D5B','094891','2E8CD2','66A5DB','90B2D7','FEFEFE','FEFEFE','FEFEFE','FEFEFE','FEFEFE','FEFEFE','E0A256','DA773A','CF4025','B81A1F','BE1A37','75202B','4E171E'];
-            }
-            var matchP = name.match(/[0-9]+/g);
-            var Prob = Math.floor(parseInt(matchP[0])/10);
-
-            var match = name.match(/Below/);
-            if (match) {
-            Prob = -Prob-1;
-            }
-            Prob = Prob+10;
-            var opacity= 0.7;
-
-            if(name.match(/EC/)){
-                var plotColor = colorFunction('FEFEFE');
-
-            }
-            else{
-               var plotColor = colorFunction(colors[Prob]);
-            }
-
-            plotColor.push(opacity);
-            return [new ol.style.Style({
-            fill: new ol.style.Fill({
-              color:  plotColor
-            }),
-            stroke: new ol.style.Stroke({
-              color: '#000000'
-            })
-            })];
-        };
-
-        // select interaction working on "pointermove"
-        var selectPointerMove = new ol.interaction.Select({
-            condition: ol.events.condition.pointerMove
-        });
-
-        // select interaction working on "pointermove"
-        var selectPointerMove2 = new ol.interaction.Select({
-            condition: ol.events.condition.pointerMove
-        });
-        // select interaction working on "pointermove"
-        var selectPointerMove3 = new ol.interaction.Select({
-            condition: ol.events.condition.pointerMove
-        });
-
-        // select interaction working on "pointermove"
-        var selectPointerMove4 = new ol.interaction.Select({
-            condition: ol.events.condition.pointerMove
-        });
-
-        // select interaction working on "pointermove"
-        var selectPointerMove5 = new ol.interaction.Select({
-            condition: ol.events.condition.pointerMove
-        });
-
-        // select interaction working on "pointermove"
-        var selectPointerMove6 = new ol.interaction.Select({
-            condition: ol.events.condition.pointerMove
-        });
-
-        //Add the vector CPC data to the map
-        var temp610 = new ol.layer.Vector({
-            source: new ol.source.KML({
-                extractStyles: false,
-                projection: 'EPSG:3857',
-                url: './cpcData/610temp_'+currentDate.format('YYYYMMDD')+'.kml'
-            }),
-            style: styleFunction
-
-        });
-
-        var temp814 = new ol.layer.Vector({
-            source: new ol.source.KML({
-                extractStyles: false,
-                projection: 'EPSG:3857',
-                url: './cpcData/814temp_'+currentDate.format('YYYYMMDD')+'.kml'
-            }),
-            style: styleFunction
-
-        });
-
-        //Add the vector CPC data to the map
-        var prcp610 = new ol.layer.Vector({
-            source: new ol.source.KML({
-                extractStyles: false,
-                projection: 'EPSG:3857',
-                url: './cpcData/610prcp_'+currentDate.format('YYYYMMDD')+'.kml'
-            }),
-            style: styleFunction
-
-        });
-
-        var prcp814 = new ol.layer.Vector({
-            source: new ol.source.KML({
-                extractStyles: false,
-                projection: 'EPSG:3857',
-                url: './cpcData/814prcp_'+currentDate.format('YYYYMMDD')+'.kml'
-            }),
-            style: styleFunction
-
-        });
-
-        var prcpMonthly = new ol.layer.Vector({
-            source: new ol.source.KML({
-                extractStyles: false,
-                projection: 'EPSG:3857',
-                url: './cpcData/monthly_prcp_'+monthlyDate.format('YYYYMMDD')+'.kml'
-            }),
-            style: styleFunction
-
-        });
-
-        var tempMonthly = new ol.layer.Vector({
-            source: new ol.source.KML({
-                extractStyles: false,
-                projection: 'EPSG:3857',
-                url: './cpcData/monthly_temp_'+monthlyDate.format('YYYYMMDD')+'.kml'
-            }),
-            style: styleFunction
-
-        });
-        //Add attribution for ESRI base map layer
-        var attribution = new ol.Attribution({
-          html: 'Tiles &copy; <a href="http://services.arcgisonline.com/ArcGIS/' +
-              'rest/services/World_Topo_Map/MapServer">ArcGIS</a>'
-        });
-
-       //Setup base esri wms map layer
-       var topo = new ol.layer.Tile({
-            source: new ol.source.XYZ({
-            attributions: [attribution],
-            url: 'http://server.arcgisonline.com/ArcGIS/rest/services/' +
-                'World_Topo_Map/MapServer/tile/{z}/{y}/{x}'
-            })
-        });
-
-
-
-        $("#title").html("8-14 Day CPC Precip");
-
-
-        var map = new ol.Map({
-            target: 'map',
-            layers: [topo,temp610],
-            controls: [],
-            view: new ol.View({
-              center: ol.proj.transform([-152, 64], 'EPSG:4326', 'EPSG:3857'),
-              zoom: 3
-            })
-        });
-
-
-        var map2 = new ol.Map({
-            target: 'map2',
-            layers: [topo,prcp610],
-            controls: [],
-            view: new ol.View({
-              center: ol.proj.transform([-152, 63], 'EPSG:4326', 'EPSG:3857'),
-              zoom: 3
-            })
-        });
-
-        var map3 = new ol.Map({
-            target: 'map3',
-            layers: [topo,temp814],
-            controls: [],
-            view: new ol.View({
-              center: ol.proj.transform([-152, 63], 'EPSG:4326', 'EPSG:3857'),
-              zoom: 3
-            })
-        });
-
-
-        var map4 = new ol.Map({
-            target: 'map4',
-            layers: [topo,prcp814],
-            controls: [],
-            view: new ol.View({
-              center: ol.proj.transform([-152, 63], 'EPSG:4326', 'EPSG:3857'),
-              zoom: 3
-            })
-        });
-
-        var map5 = new ol.Map({
-            target: 'map5',
-            layers: [topo,tempMonthly],
-            controls: [],
-            view: new ol.View({
-              center: ol.proj.transform([-152, 63], 'EPSG:4326', 'EPSG:3857'),
-              zoom: 3
-            })
-        });
-
-        var map6 = new ol.Map({
-            target: 'map6',
-            layers: [topo,prcpMonthly],
-            controls: [],
-            view: new ol.View({
-              center: ol.proj.transform([-152, 63], 'EPSG:4326', 'EPSG:3857'),
-              zoom: 3
-            })
-        });
-
-        map.on('pointermove', function(evt) {
-          var feature = this.forEachFeatureAtPixel(this.getEventPixel(evt.originalEvent), function(feature, layer) {
-            return feature;
-          });
-          if (feature) {
-            $("#message").html(feature.get('name'));
-          } else {
-            $("#message").html("Temperature");
-          }
-
-        });
-
-        map2.on('pointermove', function(evt) {
-          var feature = this.forEachFeatureAtPixel(this.getEventPixel(evt.originalEvent), function(feature, layer) {
-            return feature;
-          });
-          if (feature) {
-            $("#message2").html(feature.get('name'));
-          } else {
-            $("#message2").html("Precipitation");
-          }
-
-        });
-
-        map3.on('pointermove', function(evt) {
-          var feature = this.forEachFeatureAtPixel(this.getEventPixel(evt.originalEvent), function(feature, layer) {
-            return feature;
-          });
-          if (feature) {
-            $("#message3").html(feature.get('name'));
-          } else {
-            $("#message3").html("Temperature");
-          }
-
-        });
-
-        map4.on('pointermove', function(evt) {
-          var feature = this.forEachFeatureAtPixel(this.getEventPixel(evt.originalEvent), function(feature, layer) {
-            return feature;
-          });
-          if (feature) {
-            $("#message4").html(feature.get('name'));
-          } else {
-            $("#message4").html("Precipitation");
-          }
-
-        });
-
-        map5.on('pointermove', function(evt) {
-          var feature = this.forEachFeatureAtPixel(this.getEventPixel(evt.originalEvent), function(feature, layer) {
-            return feature;
-          });
-          if (feature) {
-            $("#message5").html(feature.get('name'));
-          } else {
-            $("#message5").html("Temperature");
-          }
-
-        });
-
-        map6.on('pointermove', function(evt) {
-          var feature = this.forEachFeatureAtPixel(this.getEventPixel(evt.originalEvent), function(feature, layer) {
-            return feature;
-          });
-          if (feature) {
-            $("#message6").html(feature.get('name'));
-          } else {
-            $("#message6").html("Precipitation");
-          }
-
-        });
-
-        map2.bindTo('view', map);
-        map3.bindTo('view', map);
-        map4.bindTo('view', map);
-        map5.bindTo('view', map);
-        map6.bindTo('view', map);
-        map.addInteraction(selectPointerMove);
-        map2.addInteraction(selectPointerMove2);
-        map3.addInteraction(selectPointerMove3);
-        map4.addInteraction(selectPointerMove4);
-        map5.addInteraction(selectPointerMove5);
-        map6.addInteraction(selectPointerMove6);
-
-
-        $("#currentDate1").change(function(){
+		
+		//create maps
+		var map = L.map("map", { zoomControl:false }).setView([64.232106, -152.172802], 3);
+		L.esri.basemapLayer("Topographic").addTo(map);
+		
+		var map2 = L.map("map2", { zoomControl:false }).setView([64.232106, -152.172802], 3);
+		L.esri.basemapLayer("Topographic").addTo(map2);
+		
+		var map3 = L.map("map3", { zoomControl:false }).setView([64.232106, -152.172802], 3);
+		L.esri.basemapLayer("Topographic").addTo(map3);
+		
+		var map4 = L.map("map4", { zoomControl:false }).setView([64.232106, -152.172802], 3);
+		L.esri.basemapLayer("Topographic").addTo(map4);
+		
+		var map5 = L.map("map5", { zoomControl:false }).setView([64.232106, -152.172802], 3);
+		L.esri.basemapLayer("Topographic").addTo(map5);
+		
+		var map6 = L.map("map6", { zoomControl:false }).setView([64.232106, -152.172802], 3);
+		L.esri.basemapLayer("Topographic").addTo(map6);
+		
+		function polystyle(feature) {
+			fillColor = feature.properties.fill;
+			lineColor = feature.properties.stroke;
+			return {
+				fillColor: fillColor,
+				weight: 1,
+				opacity: 0.8,
+				color: lineColor, 
+				fillOpacity: 0.8
+			};
+		}
+		
+		function highlightFeature(e) {
+			var layer = e.target;
+			//console.log(layer);
+			var mapId = layer._map._container.attributes.id.nodeValue;
+			var message = layer.feature.properties.name;
+			$( "#"+mapId ).siblings( ".msg" ).text(message);
+			$( "#"+mapId ).siblings( ".msg" ).css( "font-size", "10px" );
+			layer.setStyle({
+				weight: 5,
+				color: 'blue',
+				opacity: 0.5,
+				fillOpacity: 0.1,
+			});
+		
+			if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+				layer.bringToFront();
+			}
+		}
+		
+		//create geojson layers from kml data and add to appropriate map
+		$.ajax('cpcData/610temp_'+currentDate.format('YYYYMMDD')+'.kml').done(function(xml) {
+			temp610Geojson = toGeoJSON.kml(xml);
+			console.log(temp610Geojson);
+			temp610 = L.geoJson(temp610Geojson, {
+				style: polystyle,
+				onEachFeature: function (feature, layer) {
+					layer.on('mouseover', highlightFeature);
+					layer.on('mouseout', function () {
+						temp610.resetStyle(this);
+						$("#message").text("Temperature").css( "font-size", "14px" );
+					});
+				}
+			}).addTo(map);
+		});
+		
+		$.ajax('cpcData/610prcp_'+currentDate.format('YYYYMMDD')+'.kml').done(function(xml) {
+			precip610Geojson = toGeoJSON.kml(xml);
+			console.log(precip610Geojson);
+			precip610 = L.geoJson(precip610Geojson, {
+				style: polystyle,
+				onEachFeature: function (feature, layer) {
+					layer.on('mouseover', highlightFeature);
+					layer.on('mouseout', function () {
+						precip610.resetStyle(this);
+						$("#message2").text("Precipitation").css( "font-size", "14px" );
+					});
+				}
+			}).addTo(map2);
+		});
+		
+		$.ajax('cpcData/814temp_'+currentDate.format('YYYYMMDD')+'.kml').done(function(xml) {
+			temp814Geojson = toGeoJSON.kml(xml);
+			console.log(temp814Geojson);
+			temp814 = L.geoJson(temp814Geojson, {
+				style: polystyle,
+				onEachFeature: function (feature, layer) {
+					layer.on('mouseover', highlightFeature);
+					layer.on('mouseout', function () {
+						temp814.resetStyle(this);
+						$("#message3").text("Temperature").css( "font-size", "14px" );
+					});
+				}
+			}).addTo(map3);
+		});
+		
+		$.ajax('cpcData/814prcp_'+currentDate.format('YYYYMMDD')+'.kml').done(function(xml) {
+			precip814Geojson = toGeoJSON.kml(xml);
+			console.log(precip814Geojson);
+			precip814 = L.geoJson(precip814Geojson, {
+				style: polystyle,
+				onEachFeature: function (feature, layer) {
+					layer.on('mouseover', highlightFeature);
+					layer.on('mouseout', function () {
+						precip814.resetStyle(this);
+						$("#message4").text("Precipitation").css( "font-size", "14px" );
+					});
+				}
+			}).addTo(map4);
+		});
+		
+		$.ajax('cpcData/monthly_temp_'+monthlyDate.format('YYYYMMDD')+'.kml').done(function(xml) {
+			tempMonthlyGeojson = toGeoJSON.kml(xml);
+			console.log(tempMonthlyGeojson);
+			tempMonthly = L.geoJson(tempMonthlyGeojson, {
+				style: polystyle,
+				onEachFeature: function (feature, layer) {
+					layer.on('mouseover', highlightFeature);
+					layer.on('mouseout', function () {
+						tempMonthly.resetStyle(this);
+						$("#message5").text("Temperature").css( "font-size", "14px" );
+					});
+				}
+			}).addTo(map5);
+		});
+		
+		$.ajax('cpcData/monthly_prcp_'+monthlyDate.format('YYYYMMDD')+'.kml').done(function(xml) {
+			precipMonthlyGeojson = toGeoJSON.kml(xml);
+			console.log(precipMonthlyGeojson);
+			precipMonthly = L.geoJson(precipMonthlyGeojson, {
+				style: polystyle,
+				onEachFeature: function (feature, layer) {
+					layer.on('mouseover', highlightFeature);
+					layer.on('mouseout', function () {
+						precipMonthly.resetStyle(this);
+						$("#message6").text("Precipitation").css( "font-size", "14px" );
+					});
+				}
+			}).addTo(map6);
+		});
+		
+		//City Marker Properties
+		var geojsonMarkerOptions = {
+			radius: 2,
+			fillColor: "#000",
+			color: "#000",
+			weight: 1,
+			opacity: 1,
+			fillOpacity: 0.8
+		};
+		$.ajax({
+			type: "POST",
+			url: "cities.json",
+			dataType: 'json',
+			success: function (response) {
+				//console.log(response);
+				citiesLayer = L.geoJson(response, {
+					pointToLayer: function (feature, latlng) {
+						var name = feature.properties.name;
+						return L.circleMarker(latlng, geojsonMarkerOptions).bindTooltip(name,{permanent: true, direction: 'center', className: 'label'});
+					}
+				});
+				map.addLayer(citiesLayer);
+				//clone cityName layer
+				var citiesLayer2 = cloneLayer(citiesLayer);
+				var citiesLayer3 = cloneLayer(citiesLayer);
+				var citiesLayer4 = cloneLayer(citiesLayer);
+				var citiesLayer5 = cloneLayer(citiesLayer);
+				var citiesLayer6 = cloneLayer(citiesLayer);
+				map2.addLayer(citiesLayer2);
+				map3.addLayer(citiesLayer3);
+				map4.addLayer(citiesLayer4);
+				map5.addLayer(citiesLayer5);
+				map6.addLayer(citiesLayer6);
+			}
+		});
+		
+		//sync
+		map.sync(map2);map.sync(map3);map.sync(map4);map.sync(map5);map.sync(map6);
+		map2.sync(map);map2.sync(map3);map2.sync(map4);map2.sync(map5);map2.sync(map6);
+		map3.sync(map2);map3.sync(map);map3.sync(map4);map3.sync(map5);map3.sync(map6);
+		map4.sync(map2);map4.sync(map3);map4.sync(map);map4.sync(map5);map4.sync(map6);
+		map5.sync(map2);map5.sync(map3);map5.sync(map4);map5.sync(map);map5.sync(map6);
+		map6.sync(map2);map6.sync(map3);map6.sync(map4);map6.sync(map5);map6.sync(map);
+		
+		
+		//button triggers
+		$("#currentDate1").change(function(){
             var url = location.protocol + '//' + location.host + location.pathname;
             location.href = url + "?date="+moment($("#currentDate1").val()).format('YYYY-MM-DD')+"&width="+newW;
         });
@@ -606,10 +495,5 @@
             location.href = url + "?date="+currentDate.format('YYYY-MM-DD')+"&dir=forward&width="+Math.round(newW*0.9);
 
         });
-
-
-
-
-     </script>
-  </body>
+	</script>
 </html>
