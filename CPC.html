@@ -18,17 +18,17 @@
 				padding-right:5px;
 		
 			  }
-			  .subtitle{
+			.subtitle{
 				font-size: 14px;
 				height:20px;
 				}
 		
-				#currentDate {
+			#currentDate {
 				text-align: center;
 				height:20px;
 				}
 		
-			  .cpc {
+			.cpc {
 				  text-align: center;
 				  font-size: 24px;
 				  float:left;
@@ -38,7 +38,7 @@
 				  margin-top:10px;
 		
 				}
-			 .msg{
+			.msg{
 				 text-align: center;
 				 font-family: sans-serif;
 				 width:100%;
@@ -50,6 +50,7 @@
 				}
 			 #main {
 				width:820px;
+				font-family: sans-serif;
 			 }
 			 .col {
 				width:407px;
@@ -90,7 +91,8 @@
         Current Date:<input type="text" name="firstname" id='currentDate1'><button  class = ' back'>-1 Day</button><button  class = ' forward'>+1 Day</button>
         <button  class = ' backYear'>-1 Year</button><button  class = ' forwardYear'>+1 Year</button><br>
         <button id='larger' type="button" >Larger</button>
-        <button id='smaller' type="button" >Smaller</button></br>
+        <button id='smaller' type="button" >Smaller</button>
+		<label><input type="checkbox" id="cityToggle" checked>View Cities</label></br>
 
 
         <table>
@@ -214,6 +216,7 @@
         var foundMonthly = false;
         var y = 0;
         var i = 0;
+		var citiesLayer,citiesLayer2,citiesLayer3,citiesLayer4,citiesLayer5,citiesLayer6;
 
         while(i < 30){
             $.ajax({
@@ -335,6 +338,7 @@
 					layer.on('mouseout', function () {
 						temp610.resetStyle(this);
 						$("#message").text("Temperature").css( "font-size", "14px" );
+						citiesLayer.bringToFront();
 					});
 				}
 			}).addTo(map);
@@ -350,6 +354,7 @@
 					layer.on('mouseout', function () {
 						precip610.resetStyle(this);
 						$("#message2").text("Precipitation").css( "font-size", "14px" );
+						citiesLayer2.bringToFront();
 					});
 				}
 			}).addTo(map2);
@@ -365,6 +370,7 @@
 					layer.on('mouseout', function () {
 						temp814.resetStyle(this);
 						$("#message3").text("Temperature").css( "font-size", "14px" );
+						citiesLayer3.bringToFront();
 					});
 				}
 			}).addTo(map3);
@@ -380,6 +386,7 @@
 					layer.on('mouseout', function () {
 						precip814.resetStyle(this);
 						$("#message4").text("Precipitation").css( "font-size", "14px" );
+						citiesLayer4.bringToFront();
 					});
 				}
 			}).addTo(map4);
@@ -395,6 +402,7 @@
 					layer.on('mouseout', function () {
 						tempMonthly.resetStyle(this);
 						$("#message5").text("Temperature").css( "font-size", "14px" );
+						citiesLayer5.bringToFront();
 					});
 				}
 			}).addTo(map5);
@@ -410,6 +418,7 @@
 					layer.on('mouseout', function () {
 						precipMonthly.resetStyle(this);
 						$("#message6").text("Precipitation").css( "font-size", "14px" );
+						citiesLayer6.bringToFront();
 					});
 				}
 			}).addTo(map6);
@@ -417,9 +426,9 @@
 		
 		//City Marker Properties
 		var geojsonMarkerOptions = {
-			radius: 2,
-			fillColor: "#000",
-			color: "#000",
+			radius: 3,
+			fillColor: "black",
+			color: "black",
 			weight: 1,
 			opacity: 1,
 			fillOpacity: 0.8
@@ -433,21 +442,22 @@
 				citiesLayer = L.geoJson(response, {
 					pointToLayer: function (feature, latlng) {
 						var name = feature.properties.name;
-						return L.circleMarker(latlng, geojsonMarkerOptions).bindTooltip(name,{permanent: true, direction: 'center', className: 'label'});
+						return L.circleMarker(latlng, geojsonMarkerOptions).bindTooltip(name,{permanent: true, direction: 'center', offset: L.point({x: 0, y: 10}), className: 'label'});
 					}
 				});
 				map.addLayer(citiesLayer);
 				//clone cityName layer
-				var citiesLayer2 = cloneLayer(citiesLayer);
-				var citiesLayer3 = cloneLayer(citiesLayer);
-				var citiesLayer4 = cloneLayer(citiesLayer);
-				var citiesLayer5 = cloneLayer(citiesLayer);
-				var citiesLayer6 = cloneLayer(citiesLayer);
+				citiesLayer2 = cloneLayer(citiesLayer);
+				citiesLayer3 = cloneLayer(citiesLayer);
+				citiesLayer4 = cloneLayer(citiesLayer);
+				citiesLayer5 = cloneLayer(citiesLayer);
+				citiesLayer6 = cloneLayer(citiesLayer);
 				map2.addLayer(citiesLayer2);
 				map3.addLayer(citiesLayer3);
 				map4.addLayer(citiesLayer4);
 				map5.addLayer(citiesLayer5);
 				map6.addLayer(citiesLayer6);
+				citiesLayer.bringToFront();
 			}
 		});
 		
@@ -495,5 +505,22 @@
             location.href = url + "?date="+currentDate.format('YYYY-MM-DD')+"&dir=forward&width="+Math.round(newW*0.9);
 
         });
+		$('#cityToggle').on('change', function() {
+			if ($("#cityToggle").is(':checked')) {
+				map.addLayer(citiesLayer);
+				map2.addLayer(citiesLayer2);
+				map3.addLayer(citiesLayer3);
+				map4.addLayer(citiesLayer4);
+				map5.addLayer(citiesLayer5);
+				map6.addLayer(citiesLayer6);
+			}else{
+				map.removeLayer(citiesLayer);
+				map2.removeLayer(citiesLayer2);
+				map3.removeLayer(citiesLayer3);
+				map4.removeLayer(citiesLayer4);
+				map5.removeLayer(citiesLayer5);
+				map6.removeLayer(citiesLayer6);
+			}
+		});
 	</script>
 </html>
